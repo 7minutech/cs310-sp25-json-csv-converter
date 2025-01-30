@@ -2,6 +2,8 @@ package edu.jsu.mcis.cs310;
 
 import com.github.cliftonlabs.json_simple.*;
 import com.opencsv.*;
+import java.io.StringReader;
+import org.apache.commons.lang3.text.StrBuilder;
 
 public class Converter {
     
@@ -77,7 +79,20 @@ public class Converter {
         String result = "{}"; // default return value; replace later!
         
         try {
-        
+            StringReader reader = new StringReader(csvString);
+            CSVReader csvReader = new CSVReader(reader);
+            String[] nextRow;
+            JsonObject jsonObject = new JsonObject();
+            
+            while((nextRow = csvReader.readNext()) != null){
+                System.out.println(nextRow.length);
+                for (int i = 0; i < nextRow.length; i++) {
+                    System.out.println(nextRow[i] + "\t");
+                }
+                   
+                System.out.println("");
+          
+            }
             // INSERT YOUR CODE HERE
             
         }
