@@ -3,6 +3,7 @@ package edu.jsu.mcis.cs310;
 import com.github.cliftonlabs.json_simple.*;
 import com.opencsv.*;
 import java.io.StringReader;
+import java.util.Hashtable;
 import org.apache.commons.lang3.text.StrBuilder;
 
 public class Converter {
@@ -83,17 +84,43 @@ public class Converter {
             CSVReader csvReader = new CSVReader(reader);
             String[] nextRow;
             JsonObject jsonObject = new JsonObject();
+            JsonArray prodNums = new JsonArray();
+            JsonArray colHeaders = new JsonArray();
+            JsonArray episodeData = new JsonArray();
+            JsonArray episode = new JsonArray();
+            
+            boolean header = true;
             
             while((nextRow = csvReader.readNext()) != null){
-                System.out.println(nextRow.length);
-                for (int i = 0; i < nextRow.length; i++) {
-                    System.out.println(nextRow[i] + "\t");
+                for(int col = 0; col < nextRow.length; col++) {
+                    if(header == true){
+                        colHeaders.add(nextRow[col]);  
+                    }
+                    else if (col > 0){
+                        if (col > 1 && col < 4){
+                            int value = Integer.parseInt(nextRow[col]);
+                            episode.add(value);
+                            continue;
+                        }
+                        episode.add(nextRow[col]);
+                    }
+                }  
+                if (header == true){
+                    header = false;
                 }
-                   
-                System.out.println("");
-          
+                else{
+                    prodNums.add(nextRow[0]);
+                    episodeData.add(episode);
+                    episode = new JsonArray();  
+                }
+                
             }
+            jsonObject.put("ProdNums", prodNums);
+            jsonObject.put("ColHeadings", colHeaders);
+            jsonObject.put("Data", episodeData);
+            result = Jsoner.serialize(jsonObject);
             // INSERT YOUR CODE HERE
+            
             
         }
         catch (Exception e) {
