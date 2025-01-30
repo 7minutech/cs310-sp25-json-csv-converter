@@ -90,30 +90,28 @@ public class Converter {
             JsonArray episode = new JsonArray();
             
             boolean header = true;
-            
+            int rowCount = 0;
             while((nextRow = csvReader.readNext()) != null){
                 for(int col = 0; col < nextRow.length; col++) {
-                    if(header == true){
+                    if(header){
                         colHeaders.add(nextRow[col]);  
                     }
                     else if (col > 0){
-                        if (col > 1 && col < 4){
+                        if (col == 2 || col < 3){
                             int value = Integer.parseInt(nextRow[col]);
                             episode.add(value);
                             continue;
                         }
                         episode.add(nextRow[col]);
                     }
-                }  
-                if (header == true){
-                    header = false;
                 }
-                else{
+                if(!header){
                     prodNums.add(nextRow[0]);
                     episodeData.add(episode);
                     episode = new JsonArray();  
                 }
-                
+                rowCount++;
+                header = (rowCount == 0);             
             }
             jsonObject.put("ProdNums", prodNums);
             jsonObject.put("ColHeadings", colHeaders);
