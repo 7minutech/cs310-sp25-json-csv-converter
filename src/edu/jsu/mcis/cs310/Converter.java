@@ -3,6 +3,7 @@ package edu.jsu.mcis.cs310;
 import com.github.cliftonlabs.json_simple.*;
 import com.opencsv.*;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import org.apache.commons.lang3.text.StrBuilder;
 
@@ -133,11 +134,35 @@ public class Converter {
     public static String jsonToCsv(String jsonString) {
         
         String result = ""; // default return value; replace later!
+        final int EPISODE_DATA_LENGTH = 6;
+        final int FIRST_COL = 0;
         
         try {
             
             // INSERT YOUR CODE HERE
-            
+            StringReader reader = new StringReader(jsonString);
+            JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
+            JsonArray prodNums = (JsonArray) jsonObject.get("ProdNums");
+            JsonArray colHeadings = (JsonArray) jsonObject.get("ColHeadings");
+            JsonArray data = (JsonArray) jsonObject.get("Data");
+            StringWriter stringWriter = new StringWriter();
+            CSVWriter writer = new CSVWriter(stringWriter);
+            String[] headerRow = new String[colHeadings.size()];
+
+            for (int i = 0; i < colHeadings.size(); i++) {
+                headerRow[i] = (colHeadings.get(i)).toString();
+            }
+            writer.writeNext(headerRow);
+            for (int i = 0; i < data.size(); i++) {
+                String[] episodeRecord = new String[colHeadings.size()];
+                episodeRecord[FIRST_COL] = (prodNums.get(i)).toString();
+                JsonArray episdoeData = (JsonArray) data.get(i);
+                for (int j = 0; j < EPISODE_DATA_LENGTH; j++) {
+                    episodeRecord[j+1] = (episdoeData.get(j)).toString();
+                }
+                writer.writeNext(episodeRecord);   
+            }
+            result = stringWriter.toString();   
         }
         catch (Exception e) {
             e.printStackTrace();
