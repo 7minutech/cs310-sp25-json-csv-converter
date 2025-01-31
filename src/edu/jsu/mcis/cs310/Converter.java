@@ -158,7 +158,16 @@ public class Converter {
                 episodeRecord[FIRST_COL] = (prodNums.get(i)).toString();
                 JsonArray episdoeData = (JsonArray) data.get(i);
                 for (int j = 0; j < EPISODE_DATA_LENGTH; j++) {
-                    episodeRecord[j+1] = (episdoeData.get(j)).toString();
+                    String dataField = (episdoeData.get(j)).toString();  
+                    if(j == 2 && dataField.length() == 1){
+                        StringBuilder episodeNumber = new StringBuilder(dataField);
+                        episodeNumber.insert(0, "0");
+                        episodeRecord[j+1] = episodeNumber.toString(); 
+                    }
+                    else{
+                      episodeRecord[j+1] = dataField;  
+                    }
+                    
                 }
                 writer.writeNext(episodeRecord);   
             }
