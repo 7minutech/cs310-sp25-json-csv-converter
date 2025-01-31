@@ -174,9 +174,7 @@ public class Converter {
                     String dataField = (episdoeData.get(j)).toString();  
                     if(j == 2 && dataField.length() == 1){
                         //must prepend with 0 for nums if length 1
-                        StringBuilder episodeNumber = new StringBuilder(dataField);
-                        episodeNumber.insert(0, "0");
-                        episodeRecord[j+1] = episodeNumber.toString(); 
+                        episodeRecord[j+1] = Converter.prependString(dataField, "0");
                     }
                     else{
                       //first col must be excluded
@@ -194,6 +192,12 @@ public class Converter {
         
         return result.trim();
         
+    }
+    
+    public static String prependString(String str, String desired){
+        StringBuilder episodeNumber = new StringBuilder(str);
+        episodeNumber.insert(0, desired);
+        return episodeNumber.toString();
     }
     
 }
