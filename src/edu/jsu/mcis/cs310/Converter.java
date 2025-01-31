@@ -97,7 +97,7 @@ public class Converter {
                         colHeaders.add(nextRow[col]);  
                     }
                     else if (col > 0){
-                        if (col == 2 || col < 3){
+                        if (col == 2 || col == 3){
                             int value = Integer.parseInt(nextRow[col]);
                             episode.add(value);
                             continue;
