@@ -92,23 +92,31 @@ public class Converter {
             
             boolean header = true;
             int rowCount = 0;
+            //read through each row
             while((nextRow = csvReader.readNext()) != null){
+                //read each col in row
                 for(int col = 0; col < nextRow.length; col++) {
                     if(header){
+                        //add header col to obj
                         colHeaders.add(nextRow[col]);  
                     }
                     else if (col > 0){
+                        //if b/w cols 2 and 3 
+                        //must parse int for json string
                         if (col == 2 || col == 3){
                             int value = Integer.parseInt(nextRow[col]);
                             episode.add(value);
                             continue;
                         }
+                        //add col info to episode obj
                         episode.add(nextRow[col]);
                     }
                 }
                 if(!header){
+                    //add number to prodNums
                     prodNums.add(nextRow[0]);
                     episodeData.add(episode);
+                    // need to clear episode
                     episode = new JsonArray();  
                 }
                 rowCount++;
@@ -118,7 +126,6 @@ public class Converter {
             jsonObject.put("ColHeadings", colHeaders);
             jsonObject.put("Data", episodeData);
             result = Jsoner.serialize(jsonObject);
-            // INSERT YOUR CODE HERE
             
             
         }
@@ -135,12 +142,14 @@ public class Converter {
         
         String result = ""; // default return value; replace later!
         final int EPISODE_DATA_LENGTH = 6;
+        final int EPISODE_RECORD_LENGTH = 7;
         final int FIRST_COL = 0;
-        
+          
         try {
             
             // INSERT YOUR CODE HERE
             StringReader reader = new StringReader(jsonString);
+            //deserialize json to obj
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
             JsonArray prodNums = (JsonArray) jsonObject.get("ProdNums");
             JsonArray colHeadings = (JsonArray) jsonObject.get("ColHeadings");
@@ -150,21 +159,27 @@ public class Converter {
             String[] headerRow = new String[colHeadings.size()];
 
             for (int i = 0; i < colHeadings.size(); i++) {
+                //get header string arr
                 headerRow[i] = (colHeadings.get(i)).toString();
             }
             writer.writeNext(headerRow);
             for (int i = 0; i < data.size(); i++) {
-                String[] episodeRecord = new String[colHeadings.size()];
+                //clear episode record datta
+                String[] episodeRecord = new String[EPISODE_RECORD_LENGTH];
+                //prod num is first col in episode data
                 episodeRecord[FIRST_COL] = (prodNums.get(i)).toString();
                 JsonArray episdoeData = (JsonArray) data.get(i);
+                //loop through episode data
                 for (int j = 0; j < EPISODE_DATA_LENGTH; j++) {
                     String dataField = (episdoeData.get(j)).toString();  
                     if(j == 2 && dataField.length() == 1){
+                        //must prepend with 0 for nums if length 1
                         StringBuilder episodeNumber = new StringBuilder(dataField);
                         episodeNumber.insert(0, "0");
                         episodeRecord[j+1] = episodeNumber.toString(); 
                     }
                     else{
+                      //first col must be excluded
                       episodeRecord[j+1] = dataField;  
                     }
                     
